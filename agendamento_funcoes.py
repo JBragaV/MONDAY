@@ -25,7 +25,7 @@ DICIONARIO_NOMES_PAGAMENTOS = {"ISCP": "faculdade",
                                "VIVO": "vivo",
                                "CPFL": "conta_luz",
                                "TRANSFERÊNCIADECONTASALÁRIOPARACONTACORRENTE": "transferencia_salario",
-                               "HelioMirandaSantos": "aluguel",
+                               "Deal": "aluguel",
                                "Portela": "caixinha",
                                "caixinha@torresorocaba.com.br": "caixinha",
                                "Franca": "fanca",
@@ -41,11 +41,8 @@ DICIONARIO_NOMES_PAGAMENTOS = {"ISCP": "faculdade",
 
 
 def define_nome(texto):
-    print(texto.lower())
     for nome in DICIONARIO_NOMES_PAGAMENTOS.keys():
         padrao_nome = f"{nome}".lower()
-        print(padrao_nome)
-        print(re.findall(padrao_nome, texto.lower(), re.IGNORECASE))
         if re.findall(padrao_nome, texto.lower(), re.IGNORECASE):
             nome_recibo = DICIONARIO_NOMES_PAGAMENTOS.get(nome)
             return nome_recibo
@@ -96,7 +93,7 @@ def cria_pastas(mes, nome, extensao):
 
 def extrair_texto_pdf(caminho_pdf):
     with open(caminho_pdf, "rb") as f:
-        texto = pdf.PdfFileReader(f).getPage(0).extractText()
+        texto = pdf.PdfReader(f).pages[0].extract_text()
         texto = re.sub(" ", "", texto)
         mes = define_data(texto)
         nome_recibo = define_nome(texto)
@@ -105,7 +102,8 @@ def extrair_texto_pdf(caminho_pdf):
 
 
 def tratar_imagem():
-    pytesseract.pytesseract.tesseract_cmd = r"C:\Users\jbrag\PycharmProjects\monday_bot\engine_ocr\tesseract.exe"
+    pytesseract.pytesseract.tesseract_cmd = r"D:\projetos\Paim_projetos_twr\monday_assistente" \
+                                            r"\Tesseract-OCR\tesseract.exe"
     foto = pytesseract.image_to_string(Image.open('temp_img.jpg'))
     foto = re.sub(" ", "", foto)
     nome_foto = define_nome(foto)

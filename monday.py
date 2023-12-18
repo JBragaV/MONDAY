@@ -27,7 +27,7 @@ bot = telebot.TeleBot(TOKEN_API)
 print(f"Monday começou!\n{dia_hora}")
 
 
-LISTA_PAGAMENTOS_MENSAIS = ["faculdade", "mei", "net", "claro"
+LISTA_PAGAMENTOS_MENSAIS = ["faculdade", "mei", "net", "claro",
                             "vivo", "conta_luz", "aluguel",
                             "caixinha", "cartao_nu_bank", "unimed"]
 
@@ -92,16 +92,12 @@ def vencimento_contas(id_):
 
 @bot.message_handler(content_types=['photo'])
 def recibos_imagem(mensagem, tipo=""):
-    print(mensagem)
-    print(mensagem.caption)
-
     id_user = mensagem.from_user.id
     nome_temporario = "temp_img.jpg"
     if not tipo:
         id_photo = mensagem.photo[-1].file_id
     else:
         id_photo = mensagem.json['document']['file_id']
-    print(id_photo)
     photo_info = bot.get_file(id_photo)
     download_foto = bot.download_file(photo_info.file_path)
     with open(nome_temporario, 'wb') as nova_foto:
@@ -137,7 +133,6 @@ def recibos_pdf(mensagem, tipo=""):
         os.remove("recibo.pdf")
         bot.send_message(id_user, "Documento recebido e salvo!!!!")
         try:
-            print(nome_arquivo)
             if nome_arquivo in LISTA_PAGAMENTOS_MENSAIS:
                 atualiza_pagamentos(nome_arquivo)
                 bot.send_message(id_user, "Tabela de pagamentos atualizado com sucesso!!!")
@@ -147,6 +142,9 @@ def recibos_pdf(mensagem, tipo=""):
     elif "png" in nome_arquivo[-1]:
         print(mensagem.json['document']['file_id'])
         recibos_imagem(mensagem, 'png')
+    elif "xlsx" in nome_arquivo[-1]:
+        print("AINDA FALTA SER FEITA A IMPLEMENTAÇÃO")
+        pass
     else:
         bot.send_message(id_user, "Formato do arquivo não suportado!!!")
 
@@ -249,7 +247,6 @@ def inicio_de_tudo():
 
 
 bot.send_message(1189527779, "As suas ordens, Meu Senhor Supremo")
-
 
 if __name__ == "__main__":
     # bot.send_message(1189527779, "Teste de mensagem")
