@@ -3,3 +3,6 @@ venv
 .idea
 engine_ocr
 __pycache__
+recibos
+temp
+Tesseract-OCR
