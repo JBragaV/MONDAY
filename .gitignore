@@ -6,4 +6,6 @@ __pycache__
 recibos
 temp
 Tesseract-OCR
-
+recibo.docx
+recibo.pdf
+temp_img.jpg

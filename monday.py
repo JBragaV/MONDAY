@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 import re
 import os
+import magic
 
 import telebot
 from telebot import types, custom_filters
@@ -92,6 +93,7 @@ def vencimento_contas(id_):
 
 @bot.message_handler(content_types=['photo'])
 def recibos_imagem(mensagem, tipo=""):
+    print(mensagem)
     id_user = mensagem.from_user.id
     nome_temporario = "temp_img.jpg"
     if not tipo:
@@ -117,13 +119,18 @@ def recibos_imagem(mensagem, tipo=""):
             bot.send_message(id_user, "Ops!!! Alguma coisa deu errado!!!")
 
 
+<<<<<<< HEAD
 @bot.message_handler(content_types=['voice'])
 def funcaoVoice(mensagem, tipo=""):
     print(mensagem)
 
 
 @bot.message_handler(content_types=['document'])
+=======
+@bot.message_handler(content_types=['!document'])
+>>>>>>> d91753c94d68e05bbce18b3cb7aa18c901546861
 def recibos_pdf(mensagem, tipo=""):
+    print(mensagem)
     id_user = mensagem.from_user.id
     arquivo = bot.get_file(mensagem.document.file_id)
     nome_arquivo = arquivo.file_path.split("/")
@@ -173,6 +180,38 @@ def servico(mensagem):
             bot.send_message(id_user, f"Mas já saiu.")
     else:
         bot.send_message(id_user, f"Jocimar está de {servicos[0]}")
+
+
+@bot.message_handler(content_types=['contact'])
+def responder1(mensagem):
+    print(mensagem)
+
+
+@bot.message_handler(content_types=['document'])
+def responder1(mensagem):
+    arquivo = bot.get_file(mensagem.document.file_id)
+    print(arquivo.file_path)
+    arquivo_dowloaded = bot.download_file(arquivo.file_path)
+    extensao_arquivo = arquivo.file_path.split('/')[-1].split(".")[-1]
+    print(extensao_arquivo)
+    with open(f"recibo.{extensao_arquivo}", "wb") as recibo:
+        recibo.write(arquivo_dowloaded)
+    print(magic.from_file(f"recibo.{extensao_arquivo}"))
+
+
+@bot.message_handler(content_types=['audio'])
+def responder2(mensagem):
+    print(mensagem)
+
+
+@bot.message_handler(content_types=['location'])
+def responder3(mensagem):
+    print(mensagem)
+
+
+@bot.message_handler(content_types=['voice'])
+def responder4(mensagem):
+    print(mensagem)
 
 
 @bot.message_handler(func=lambda m: True)
