@@ -9,10 +9,10 @@ import pytesseract
 from openpyxl import load_workbook
 
 
-LISTA_MESES = ['01 - 01 - janeiro', "02 - fevereiro", "03 - marco",
-               "04 - abril", "maio", "junho",
-               "julho", "agosto", "setembro",
-               "outubro", "novembro", "dezembro"]
+LISTA_MESES = ['01 - janeiro', "02 - fevereiro", "03 - marco",
+               "04 - abril", "05 - maio", "06 - junho",
+               "07 - julho", "08 - agosto", "09 - setembro",
+               "10 - outubro", "12 - novembro", "12 - dezembro"]
 
 
 ano = dt.date.today().year
@@ -102,8 +102,7 @@ def extrair_texto_pdf(caminho_pdf):
 
 
 def tratar_imagem():
-    pytesseract.pytesseract.tesseract_cmd = r"D:\projetos\Paim_projetos_twr\monday_assistente" \
-                                            r"\Tesseract-OCR\tesseract.exe"
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Users\Adm\Desktop\Projetos\Python\monday\Tesseract-OCR\tesseract.exe"
     foto = pytesseract.image_to_string(Image.open('temp_img.jpg'))
     foto = re.sub(" ", "", foto)
     nome_foto = define_nome(foto)
