@@ -117,6 +117,11 @@ def recibos_imagem(mensagem, tipo=""):
             bot.send_message(id_user, "Ops!!! Alguma coisa deu errado!!!")
 
 
+@bot.message_handler(content_types=['voice'])
+def funcaoVoice(mensagem, tipo=""):
+    print(mensagem)
+
+
 @bot.message_handler(content_types=['document'])
 def recibos_pdf(mensagem, tipo=""):
     id_user = mensagem.from_user.id
@@ -172,6 +177,7 @@ def servico(mensagem):
 
 @bot.message_handler(func=lambda m: True)
 def responder(mensagem):
+    print(mensagem)
     id_user = mensagem.from_user.id
     texto = mensagem.text
     if texto.lower() == "serviço":
