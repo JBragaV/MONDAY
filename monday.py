@@ -119,16 +119,12 @@ def recibos_imagem(mensagem, tipo=""):
             bot.send_message(id_user, "Ops!!! Alguma coisa deu errado!!!")
 
 
-<<<<<<< HEAD
 @bot.message_handler(content_types=['voice'])
-def funcaoVoice(mensagem, tipo=""):
+def funcao_voice(mensagem, tipo=""):
     print(mensagem)
 
 
-@bot.message_handler(content_types=['document'])
-=======
 @bot.message_handler(content_types=['!document'])
->>>>>>> d91753c94d68e05bbce18b3cb7aa18c901546861
 def recibos_pdf(mensagem, tipo=""):
     print(mensagem)
     id_user = mensagem.from_user.id
@@ -189,14 +185,19 @@ def responder1(mensagem):
 
 @bot.message_handler(content_types=['document'])
 def responder1(mensagem):
+    ### Enviando e recebendo os arquivos para reentender como funciona o recebimento, download e salvamento dos arquivos
+    file_id = mensagem.document.file_id
+    nome_arquivo = mensagem.document.file_name
+    print(file_id)
     arquivo = bot.get_file(mensagem.document.file_id)
+    print(arquivo)
     print(arquivo.file_path)
     arquivo_dowloaded = bot.download_file(arquivo.file_path)
     extensao_arquivo = arquivo.file_path.split('/')[-1].split(".")[-1]
     print(extensao_arquivo)
     with open(f"recibo.{extensao_arquivo}", "wb") as recibo:
         recibo.write(arquivo_dowloaded)
-    print(magic.from_file(f"recibo.{extensao_arquivo}"))
+    #print(magic.from_file(f"recibo.{extensao_arquivo}"))
 
 
 @bot.message_handler(content_types=['audio'])
