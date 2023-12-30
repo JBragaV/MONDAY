@@ -186,18 +186,22 @@ def responder1(mensagem):
 @bot.message_handler(content_types=['document'])
 def responder1(mensagem):
     ### Enviando e recebendo os arquivos para reentender como funciona o recebimento, download e salvamento dos arquivos
-    file_id = mensagem.document.file_id
-    nome_arquivo = mensagem.document.file_name
-    print(file_id)
-    arquivo = bot.get_file(mensagem.document.file_id)
-    print(arquivo)
-    print(arquivo.file_path)
-    arquivo_dowloaded = bot.download_file(arquivo.file_path)
-    extensao_arquivo = arquivo.file_path.split('/')[-1].split(".")[-1]
-    print(extensao_arquivo)
-    with open(f"recibo.{extensao_arquivo}", "wb") as recibo:
-        recibo.write(arquivo_dowloaded)
-    #print(magic.from_file(f"recibo.{extensao_arquivo}"))
+    print(mensagem)
+
+    if mensagem.caption:
+        print(mensagem.caption)
+        file_id = mensagem.document.file_id
+        nome_arquivo = mensagem.document.file_name.split(".")[0]
+        print(file_id)
+        arquivo = bot.get_file(mensagem.document.file_id)
+        print(arquivo)
+        print(arquivo.file_path)
+        arquivo_dowloaded = bot.download_file(arquivo.file_path)
+        extensao_arquivo = arquivo.file_path.split('/')[-1].split(".")[-1]
+        print(extensao_arquivo)
+        with open(f"{nome_arquivo}_{mensagem.caption}.{extensao_arquivo}", "wb") as recibo:
+            recibo.write(arquivo_dowloaded)
+        #print(magic.from_file(f"recibo.{extensao_arquivo}"))
 
 
 @bot.message_handler(content_types=['audio'])
