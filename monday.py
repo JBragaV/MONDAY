@@ -8,6 +8,7 @@ import wave
 import telebot
 from telebot import types, custom_filters
 import magic
+import whisper
 
 from SECRETS import TOKEN_API
 import agendamento_funcoes as manipulador
@@ -223,16 +224,18 @@ def responder4(mensagem):
     print(mensagem)
     audio = bot.get_file(mensagem.voice.file_id)
     audio_baixado = bot.download_file(audio.file_path)
+    extensao_arquivo = audio.file_path.split('/')[-1].split('.')[-1]
+    print(extensao_arquivo)
     print(audio)
-    with open(f"minha_voz.m4a", "wb") as recibo:
+    nome_arquivo = f"arquivo_voz.{extensao_arquivo}"
+    with open(nome_arquivo, "wb") as recibo:
         recibo.write(audio_baixado)
-#    with open(f"minha_voz.mp3", "wb") as recibo:
-#        recibo.write(audio_baixado)
-    # modelo = whisper.load_model("base")
+    modelo = whisper.load_model("base")
     bot.send_audio(1189527779, mensagem.voice.file_id)
-    # resposta = modelo.transcribe('minha_voz.m4a')
-    # bot.send_message(1189527779, resposta["text"])
-
+    resposta = ""
+    numero = 1
+    resposta = modelo.transcribe(nome_arquivo, fp16=False)
+    bot.send_message(1189527779, resposta["text"])
 
 
 @bot.message_handler(func=lambda m: True)
