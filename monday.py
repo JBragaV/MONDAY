@@ -4,6 +4,7 @@ from datetime import datetime
 import re
 import os
 import magic
+import whisper
 
 import telebot
 from telebot import types, custom_filters
@@ -119,12 +120,7 @@ def recibos_imagem(mensagem, tipo=""):
             bot.send_message(id_user, "Ops!!! Alguma coisa deu errado!!!")
 
 
-@bot.message_handler(content_types=['voice'])
-def funcao_voice(mensagem, tipo=""):
-    print(mensagem)
-
-
-@bot.message_handler(content_types=['!document'])
+#@bot.message_handler(content_types=['document'])
 def recibos_pdf(mensagem, tipo=""):
     print(mensagem)
     id_user = mensagem.from_user.id
@@ -186,18 +182,34 @@ def responder1(mensagem):
 @bot.message_handler(content_types=['document'])
 def responder1(mensagem):
     ### Enviando e recebendo os arquivos para reentender como funciona o recebimento, download e salvamento dos arquivos
-    file_id = mensagem.document.file_id
-    nome_arquivo = mensagem.document.file_name
-    print(file_id)
-    arquivo = bot.get_file(mensagem.document.file_id)
-    print(arquivo)
-    print(arquivo.file_path)
-    arquivo_dowloaded = bot.download_file(arquivo.file_path)
-    extensao_arquivo = arquivo.file_path.split('/')[-1].split(".")[-1]
-    print(extensao_arquivo)
-    with open(f"recibo.{extensao_arquivo}", "wb") as recibo:
-        recibo.write(arquivo_dowloaded)
-    #print(magic.from_file(f"recibo.{extensao_arquivo}"))
+    if mensagem.document.mime_type != "image/jpeg":
+        print(mensagem)
+        # Observar MimiType em documents
+        if mensagem.caption:
+            print(mensagem.caption)
+            file_id = mensagem.document.file_id
+            nome_arquivo = mensagem.document.file_name.split(".")[0]
+            print(file_id)
+            arquivo = bot.get_file(mensagem.document.file_id)
+            print(arquivo)
+            print(arquivo.file_path)
+            arquivo_dowloaded = bot.download_file(arquivo.file_path)
+            extensao_arquivo = arquivo.file_path.split('/')[-1].split(".")[-1]
+            print(extensao_arquivo)
+            with open(f"{nome_arquivo}_{mensagem.caption}.{extensao_arquivo}", "wb") as recibo:
+                recibo.write(arquivo_dowloaded)
+            # print(magic.from_file(f"recibo.{extensao_arquivo}"))
+    else:
+        funcao_teste_foto_notafiscal(mensagem, "essa função veio daqui")
+
+
+@bot.message_handler(content_types=['photo'])
+def funcao_teste_foto_notafiscal(mensagem, teste=""):
+    print(mensagem)
+    print(teste)
+    if mensagem.caption:
+        print(mensagem.caption)
+        print(mensagem.photo[-1])
 
 
 @bot.message_handler(content_types=['audio'])
@@ -212,7 +224,19 @@ def responder3(mensagem):
 
 @bot.message_handler(content_types=['voice'])
 def responder4(mensagem):
+    # https://www.hashtagtreinamentos.com/como-transcrever-audio-com-python
     print(mensagem)
+    audio = bot.get_file(mensagem.voice.file_id)
+    audio_baixado = bot.download_file(audio.file_path)
+    print(audio)
+    with open(f"minha_voz.m4a", "wb") as recibo:
+        recibo.write(audio_baixado)
+    with open(f"minha_voz.mp3", "wb") as recibo:
+        recibo.write(audio_baixado)
+    modelo = whisper.load_model("base")
+    bot.send_audio(1189527779, mensagem.voice.file_id)
+    resposta = modelo.transcribe('minha_voz.mp3')
+    bot.send_message(1189527779, resposta["text"])
 
 
 @bot.message_handler(func=lambda m: True)
