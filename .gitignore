@@ -9,3 +9,8 @@ Tesseract-OCR
 recibo.docx
 recibo.pdf
 temp_img.jpg
+*.pdf
+*.mp3
+*.ogg
+*.wav
+*.m4a
