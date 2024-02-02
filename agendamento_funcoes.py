@@ -40,17 +40,21 @@ DICIONARIO_NOMES_PAGAMENTOS = {"ISCP": "faculdade",
                                "SIMPLESNACIONAL": "mei"}
 
 
-def define_nome(texto):
+def define_nome(texto) -> str:
     for nome in DICIONARIO_NOMES_PAGAMENTOS.keys():
         padrao_nome = f"{nome}".lower()
         if re.findall(padrao_nome, texto.lower(), re.IGNORECASE):
             nome_recibo = DICIONARIO_NOMES_PAGAMENTOS.get(nome)
             return nome_recibo
-
     return 'recibo_fora_da_listagem'
 
 
-def define_data(texto):
+def define_data(texto: str) -> str:
+    """
+    Função que recebe um texto e identifica o mês existente e retorna uma string do mês presente no documento
+    :param texto: Texto em forma de string para ser identificado o mês
+    :return: Nome do mês por extenso em formato string
+    """
     texto_novo = str(texto)
     padrao_data = r"\d{2}\/\d{2}\/\d{2,4}"
     datas = re.findall(padrao_data, texto_novo)
@@ -73,7 +77,14 @@ def define_data(texto):
             return mes
 
 
-def cria_pastas(mes, nome, extensao):
+def cria_pastas(mes, nome, extensao) -> str:
+    """
+    Função responsavel por identificar se uma pasta existe e caso não exista ???cria uma pasta??? e retorna o caminho
+    :param mes:
+    :param nome:
+    :param extensao: extensção do arquivo
+    :return:
+    """
     if not os.path.exists("recibos"):
         os.mkdir("recibos")
     if not os.path.exists(os.path.join("recibos", str(ano))):
@@ -91,7 +102,12 @@ def cria_pastas(mes, nome, extensao):
     return caminho_arquivo
 
 
-def extrair_texto_pdf(caminho_pdf):
+def extrair_texto_pdf(caminho_pdf) -> tuple:
+    """
+
+    :param caminho_pdf:
+    :return:
+    """
     with open(caminho_pdf, "rb") as f:
         texto = pdf.PdfReader(f).pages[0].extract_text()
         texto = re.sub(" ", "", texto)
@@ -101,7 +117,7 @@ def extrair_texto_pdf(caminho_pdf):
     return mes, nome_arquivo
 
 
-def tratar_imagem():
+def tratar_imagem() -> tuple:
     pytesseract.pytesseract.tesseract_cmd = (r"C:\Users\Adm\Desktop\Projetos\Python\monday"
                                              r"\Tesseract-OCR\tesseract.exe")
     foto = pytesseract.image_to_string(Image.open('temp_img.jpg'))
@@ -111,7 +127,7 @@ def tratar_imagem():
     return mes, nome_foto
 
 
-def exibircao_servico_dia():
+def exibircao_servico_dia() -> list:
     wb = load_workbook(filename="servicos_jo_nov.xlsx")
     planilha_svc = wb.worksheets[0]
     celula_svc = 1
