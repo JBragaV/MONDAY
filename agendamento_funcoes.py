@@ -102,8 +102,8 @@ def extrair_texto_pdf(caminho_pdf):
 
 
 def tratar_imagem():
-    pytesseract.pytesseract.tesseract_cmd = (r"C:\Users\jbrag\OneDrive\Área de Trabalho\Projetos\Pessoal"
-                                             r"\Python\Monday\Tesseract-OCR\tesseract.exe")
+    pytesseract.pytesseract.tesseract_cmd = (r"C:\Users\Adm\Desktop\Projetos\Python\monday"
+                                             r"\Tesseract-OCR\tesseract.exe")
     foto = pytesseract.image_to_string(Image.open('temp_img.jpg'))
     foto = re.sub(" ", "", foto)
     nome_foto = define_nome(foto)

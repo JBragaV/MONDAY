@@ -1,9 +1,8 @@
 # coding: utf8
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
 import os
-import whisper
 
 
 import telebot
@@ -15,14 +14,17 @@ from SECRETS import TOKEN_API
 import agendamento_funcoes as manipulador
 from registro_pagamentos import atualiza_pagamentos, dizer_contas_a_pagar
 
+user_tags = {}
 
-def gerador_hora():
-    dia_hora = datetime.now()
+
+def gerador_hora_certa() -> str:
+    dia_hora = datetime.now()#+timedelta(minutes=6)
+    print(type(dia_hora))
     dia_hora = dia_hora.strftime("%H:%M")
     return dia_hora
 
 
-dia_hora = gerador_hora()
+dia_hora = gerador_hora_certa()
 
 bot = telebot.TeleBot(TOKEN_API)
 
@@ -68,7 +70,7 @@ def links_guardar(mensagem):
 def vencimento_contas(id_):
     try:
         CONTAS = {
-            "Aluguel": "dia 06",
+            "Aluguel": "dia 10",
             "Cartão nú": "primeiro útil após dia 09",
             "Luz": "dia 08",
             "Net": "dia 08",
@@ -88,8 +90,7 @@ def vencimento_contas(id_):
         bot.send_message(id_, "Me conserta, meu mestre")
 
 
-
-#@bot.message_handler(content_types=['photo'])
+@bot.message_handler(content_types=['photo'])
 def recibos_imagem(mensagem, tipo=""):
     print(mensagem)
     id_user = mensagem.from_user.id
@@ -117,7 +118,7 @@ def recibos_imagem(mensagem, tipo=""):
             bot.send_message(id_user, "Ops!!! Alguma coisa deu errado!!!")
 
 
-#@bot.message_handler(content_types=['document'])
+@bot.message_handler(content_types=['document'])
 def recibos_pdf(mensagem, tipo=""):
     print(mensagem)
     id_user = mensagem.from_user.id
@@ -153,7 +154,7 @@ def recibos_pdf(mensagem, tipo=""):
 def servico(mensagem):
     id_user = mensagem.from_user.id
     servicos = manipulador.exibircao_servico_dia()
-    hora_atual = gerador_hora()
+    hora_atual = gerador_hora_certa()
     hora = hora_atual.split(":")[0]
     if len(servicos) > 1:
         inicio = servicos[0]
@@ -176,7 +177,7 @@ def responder1(mensagem):
     print(mensagem)
 
 
-@bot.message_handler(content_types=['document'])
+#@bot.message_handler(content_types=['document'])
 def responder1(mensagem):
     ### Enviando e recebendo os arquivos para reentender como funciona o recebimento, download e salvamento dos arquivos
     if mensagem.document.mime_type != "image/jpeg":
@@ -201,7 +202,7 @@ def responder1(mensagem):
         funcao_teste_foto_notafiscal(mensagem, "essa função veio daqui")
 
 
-@bot.message_handler(content_types=['photo'])
+#@bot.message_handler(content_types=['photo'])
 def funcao_teste_foto_notafiscal(mensagem, teste=""):
     print(mensagem)
     print(teste)
@@ -242,23 +243,30 @@ def voz_para_texto(mensagem):
 @bot.message_handler(func=lambda m: True)
 def responder(mensagem):
     id_user = mensagem.from_user.id
-    texto = mensagem.text
-    if texto.lower() == "serviço":
-        servico(mensagem)
-    elif texto.lower() == "enviar escala":
-        enviar_escala(id_user)
-    elif texto.lower() == "listar links":
-        listar_links(id_user)
-    elif texto.lower() == "vencimento contas":
-        vencimento_contas(id_user)
-    elif texto.lower() == "opção":
-        teste_funcao_repeteco(id_user)
-    elif texto.lower() == "contas em aberto":
-        contas_em_aberto(id_user)
+    tag = user_tags.get(id_user, 1)
+    print(user_tags)
+    print(tag)
+    if tag == 1:
+        user_tags[id_user] = 2
+        texto = mensagem.text
+        if texto.lower() == "serviço":
+            servico(mensagem)
+        elif texto.lower() == "enviar escala":
+            enviar_escala(id_user)
+        elif texto.lower() == "listar links":
+            listar_links(id_user)
+        elif texto.lower() == "vencimento contas":
+            vencimento_contas(id_user)
+        elif texto.lower() == "opção":
+            teste_funcao_repeteco(id_user)
+        elif texto.lower() == "contas em aberto":
+            contas_em_aberto(id_user)
+        else:
+            menu = f"O que você quer saber de mim, {mensagem.from_user.first_name}"
+            bot.send_message(mensagem.chat.id, menu)
     else:
-        menu = f"""O que você quer saber de mim, {mensagem.from_user.first_name}"""
+        menu = f"O teste da teg com o get está funcionando, {mensagem.from_user.first_name}"
         bot.send_message(mensagem.chat.id, menu)
-
 
 def contas_em_aberto(id):
     lista_contas_em_aberto = dizer_contas_a_pagar()

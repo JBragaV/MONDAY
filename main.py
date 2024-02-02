@@ -1,5 +1,6 @@
-from monday import bot
 from random import randint
+from datetime import timedelta
+from monday import bot, gerador_hora_certa
 
 
 def numeros_mega_sena():
@@ -10,6 +11,12 @@ def numeros_mega_sena():
     print(conjunto)
 
 
+def meu_looping():
+    hora_inicio = gerador_hora_certa()
+
+
+
 if __name__ == "__main__":
     numeros_mega_sena()
+    meu_looping()
     bot.infinity_polling()
