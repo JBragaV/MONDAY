@@ -10,6 +10,7 @@ from telebot import types, custom_filters
 import magic
 import whisper
 
+
 import agendamento_funcoes as manipulador
 from registro_pagamentos import atualiza_pagamentos, dizer_contas_a_pagar
 
@@ -18,7 +19,6 @@ user_tags = {}
 
 def gerador_hora_certa() -> str:
     dia_hora = datetime.now()#+timedelta(minutes=6)
-    print(type(dia_hora))
     dia_hora = dia_hora.strftime("%H:%M")
     return dia_hora
 
@@ -39,7 +39,7 @@ bot.add_custom_filter(custom_filters.TextMatchFilter())
 
 
 # Função finalizada
-def enviar_escala(chat_id):
+def enviar_escala(chat_id) -> None:
     bot.send_chat_action(chat_id, "upload_document")
     time.sleep(5)
     doc = open('servicos_jo_nov.xlsx', 'rb')
@@ -48,7 +48,7 @@ def enviar_escala(chat_id):
 
 
 # @bot.message_handler(regexp="http[s]?://")
-def links_guardar(mensagem):
+def links_guardar(mensagem) -> None:
     texto = mensagem.text
     id = mensagem.from_user.id
     padrao_link = r"http[s]?:\D\D[a-zA-z0-9._/-]*"
@@ -66,7 +66,7 @@ def links_guardar(mensagem):
 
 
 # Função finalizada, para sair do sistema.
-def vencimento_contas(id_):
+def vencimento_contas(id_) -> None:
     try:
         CONTAS = {
             "Aluguel": "dia 10",
@@ -90,7 +90,7 @@ def vencimento_contas(id_):
 
 
 @bot.message_handler(content_types=['photo'])
-def recibos_imagem(mensagem, tipo=""):
+def recibos_imagem(mensagem, tipo="") -> None:
     print(mensagem)
     id_user = mensagem.from_user.id
     nome_temporario = "temp_img.jpg"
@@ -118,8 +118,7 @@ def recibos_imagem(mensagem, tipo=""):
 
 
 @bot.message_handler(content_types=['document'])
-def recibos_pdf(mensagem, tipo=""):
-    print(mensagem)
+def recibos_pdf(mensagem, tipo="") -> None:
     id_user = mensagem.from_user.id
     arquivo = bot.get_file(mensagem.document.file_id)
     nome_arquivo = arquivo.file_path.split("/")
@@ -150,7 +149,7 @@ def recibos_pdf(mensagem, tipo=""):
         bot.send_message(id_user, "Formato do arquivo não suportado!!!")
 
 
-def servico(mensagem):
+def servico(mensagem) -> None:
     id_user = mensagem.from_user.id
     servicos = manipulador.exibircao_servico_dia()
     hora_atual = gerador_hora_certa()
@@ -221,26 +220,21 @@ def responder3(mensagem):
 
 
 @bot.message_handler(content_types=['voice'])
-def voz_para_texto(mensagem):
-    print(mensagem)
+def voz_para_texto(mensagem) -> None:
     audio = bot.get_file(mensagem.voice.file_id)
     audio_baixado = bot.download_file(audio.file_path)
     extensao_arquivo = audio.file_path.split('/')[-1].split('.')[-1]
-    print(extensao_arquivo)
-    print(audio)
     nome_arquivo = f"arquivo_voz.{extensao_arquivo}"
     with open(nome_arquivo, "wb") as recibo:
         recibo.write(audio_baixado)
     modelo = whisper.load_model("base")
     bot.send_audio(1189527779, mensagem.voice.file_id)
-    resposta = ""
-    numero = 1
     resposta = modelo.transcribe(nome_arquivo, fp16=False)
     bot.send_message(1189527779, resposta["text"])
 
 
 @bot.message_handler(func=lambda m: True)
-def responder(mensagem):
+def responder(mensagem) -> None:
     id_user = mensagem.from_user.id
     tag = user_tags.get(id_user, 1)
     print(user_tags)
@@ -267,43 +261,44 @@ def responder(mensagem):
         menu = f"O teste da teg com o get está funcionando, {mensagem.from_user.first_name}"
         bot.send_message(mensagem.chat.id, menu)
 
-def contas_em_aberto(id):
+
+def contas_em_aberto(id_) -> None:
     lista_contas_em_aberto = dizer_contas_a_pagar()
     if len(lista_contas_em_aberto) > 0:
-        bot.send_message(id, "Essas são as contas em aberto desse mês")
+        bot.send_message(id_, "Essas são as contas em aberto desse mês")
         for conta in lista_contas_em_aberto:
-            bot.send_message(id, conta)
+            bot.send_message(id_, conta)
     else:
-        bot.send_message(id, "Todas as contas do mês já foram pagas!!!")
+        bot.send_message(id_, "Todas as contas do mês já foram pagas!!!")
 
 
-def listar_links(id):
+def listar_links(id_) -> None:
     try:
         with open("links.txt", "r") as f:
             lista_conteusdos = []
             for linha in f:
                 conteudo_arquivo = linha.split(": ")
-                if int(conteudo_arquivo[0]) == id:
+                if int(conteudo_arquivo[0]) == id_:
                     lista_conteusdos.append(conteudo_arquivo[1][0:-1])
         if len(lista_conteusdos) > 0:
             if id == 1189527779:
-                bot.send_message(id, "Meu mestre e senhor supremo!!!")
-                bot.send_chat_action(id, "typing", 3)
+                bot.send_message(id_, "Meu mestre e senhor supremo!!!")
+                bot.send_chat_action(id_, "typing", 3)
                 time.sleep(3)
-                bot.send_message(id, "Aqui estão os links que o senhor me enviou!!!")
-                bot.send_chat_action(id, "typing", 3)
+                bot.send_message(id_, "Aqui estão os links que o senhor me enviou!!!")
+                bot.send_chat_action(id_, "typing", 3)
                 time.sleep(3)
             else:
-                bot.send_message(id, "Aqui estão os links que me enviou!!!")
+                bot.send_message(id_, "Aqui estão os links que me enviou!!!")
             for conteudo in lista_conteusdos:
-                bot.send_message(id, conteudo)
+                bot.send_message(id_, conteudo)
         else:
-            bot.send_message(id, "Não tem nenhum link guardado!!!")
+            bot.send_message(id_, "Não tem nenhum link guardado!!!")
     except Exception:
-        bot.send_message(id, "Ops!!! Deu algum erro na hora de abrir o arquivos com os links")
+        bot.send_message(id_, "Ops!!! Deu algum erro na hora de abrir o arquivos com os links")
 
 
-def teste_funcao_repeteco(chat_id):
+def teste_funcao_repeteco(chat_id) -> None:
     markup = types.ReplyKeyboardMarkup()
     itembtna = types.KeyboardButton('Enviar Escala')
     itembtnv = types.KeyboardButton('Contas em aberto')
