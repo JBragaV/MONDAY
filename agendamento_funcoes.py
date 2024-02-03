@@ -6,7 +6,6 @@ import os
 import PyPDF2 as pdf
 from PIL import Image
 import pytesseract
-from openpyxl import load_workbook
 
 
 LISTA_MESES = ['01 - janeiro', "02 - fevereiro", "03 - marco",
@@ -40,7 +39,7 @@ DICIONARIO_NOMES_PAGAMENTOS = {"ISCP": "faculdade",
                                "SIMPLESNACIONAL": "mei"}
 
 
-def define_nome(texto) -> str:
+def define_nome_recibo(texto) -> str:
     for nome in DICIONARIO_NOMES_PAGAMENTOS.keys():
         padrao_nome = f"{nome}".lower()
         if re.findall(padrao_nome, texto.lower(), re.IGNORECASE):
@@ -80,10 +79,10 @@ def define_data(texto: str) -> str:
 def cria_pastas(mes, nome, extensao) -> str:
     """
     Função responsavel por identificar se uma pasta existe e caso não exista ???cria uma pasta??? e retorna o caminho
-    :param mes:
-    :param nome:
-    :param extensao: extensção do arquivo
-    :return:
+    :param mes: Nome do mês que irá a pasta a ser criada deve ter
+    :param nome: Nome do arquivo que irá ser salvo no sistema
+    :param extensao: extensção do arquivo que irá ser salvo
+    :return: Retorna em formato de string o caminho completo, com a extensão, do arquivo salvo
     """
     if not os.path.exists("recibos"):
         os.mkdir("recibos")
@@ -112,7 +111,7 @@ def extrair_texto_pdf(caminho_pdf) -> tuple:
         texto = pdf.PdfReader(f).pages[0].extract_text()
         texto = re.sub(" ", "", texto)
         mes = define_data(texto)
-        nome_recibo = define_nome(texto)
+        nome_recibo = define_nome_recibo(texto)
         nome_arquivo = f"{nome_recibo}"
     return mes, nome_arquivo
 
@@ -122,34 +121,10 @@ def tratar_imagem() -> tuple:
                                              r"\Tesseract-OCR\tesseract.exe")
     foto = pytesseract.image_to_string(Image.open('temp_img.jpg'))
     foto = re.sub(" ", "", foto)
-    nome_foto = define_nome(foto)
+    nome_foto = define_nome_recibo(foto)
     mes = define_data(foto)
     return mes, nome_foto
 
 
-def exibircao_servico_dia() -> list:
-    wb = load_workbook(filename="servicos_jo_nov.xlsx")
-    planilha_svc = wb.worksheets[0]
-    celula_svc = 1
-    dia_hoje = dt.date.today().day
-    for i in range(6, 37):
-        valor = planilha_svc.cell(row=i, column=4).value
-        if isinstance(valor, str):
-            dia = valor.split("/")[0]
-            data = dia_hoje
-            if dia_hoje < 10:
-                data = f"0{dia_hoje}"
-            if dia == str(data):
-                celula_svc = i
-                break
-    servico = planilha_svc.cell(row=celula_svc, column=6).value
-    if servico != 'FOLGA':
-        servico = servico.split("/")
-        tupla_svc = [servico[0], servico[1]]
-        return tupla_svc
-    else:
-        return ["FOLGA"]
-
-
 if __name__ == "__main__":
-    exibircao_servico_dia()
+    pass
