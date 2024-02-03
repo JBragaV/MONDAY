@@ -10,7 +10,6 @@ from telebot import types, custom_filters
 import magic
 import whisper
 
-from SECRETS import TOKEN_API
 import agendamento_funcoes as manipulador
 from registro_pagamentos import atualiza_pagamentos, dizer_contas_a_pagar
 
@@ -26,7 +25,7 @@ def gerador_hora_certa() -> str:
 
 dia_hora = gerador_hora_certa()
 
-bot = telebot.TeleBot(TOKEN_API)
+bot = telebot.TeleBot(os.environ["TOKEN_API"])
 
 
 print(f"Monday começou!\n{dia_hora}")

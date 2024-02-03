@@ -15,7 +15,6 @@ def meu_looping():
     hora_inicio = gerador_hora_certa()
 
 
-
 if __name__ == "__main__":
     numeros_mega_sena()
     meu_looping()
