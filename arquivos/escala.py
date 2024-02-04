@@ -10,8 +10,9 @@ from openpyxl import load_workbook
 from temp.decoradores_jocimar import imprimeNome
 
 @imprimeNome
-def salvando_escala(escala=""):
-    pass
+def salvando_escala(escala) -> None:
+    with open("Escala Jan 24.xlsx", "wb") as arquivo:
+        arquivo.write(escala)
 
 
 def exibircao_servico_dia() -> list:
@@ -39,5 +40,5 @@ def exibircao_servico_dia() -> list:
 
 
 
-salvando_escala()
+
 

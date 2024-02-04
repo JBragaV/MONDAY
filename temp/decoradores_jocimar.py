@@ -1,5 +1,5 @@
 def imprimeNome(fun):
-    def whraper():
+    def whraper(escala="", *args, **kwargs):
         print(f"Estou na {fun.__name__}")
-        return fun()
+        return fun(escala, *args, **kwargs)
     return whraper

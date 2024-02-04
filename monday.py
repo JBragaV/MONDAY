@@ -12,6 +12,7 @@ import whisper
 
 
 import agendamento_funcoes as manipulador
+from arquivos import salvando_escala, exibircao_servico_dia
 from registro_pagamentos import atualiza_pagamentos, dizer_contas_a_pagar
 
 user_tags = {}
@@ -122,8 +123,8 @@ def recibos_pdf(mensagem, tipo="") -> None:
     id_user = mensagem.from_user.id
     arquivo = bot.get_file(mensagem.document.file_id)
     nome_arquivo = arquivo.file_path.split("/")
+    arquivo_dowloaded = bot.download_file(arquivo.file_path)
     if "pdf" in nome_arquivo[-1]:
-        arquivo_dowloaded = bot.download_file(arquivo.file_path)
         with open("recibo.pdf", "wb") as recibo:
             recibo.write(arquivo_dowloaded)
         mes, nome_arquivo = manipulador.extrair_texto_pdf("recibo.pdf")
@@ -143,6 +144,7 @@ def recibos_pdf(mensagem, tipo="") -> None:
         print(mensagem.json['document']['file_id'])
         recibos_imagem(mensagem, 'png')
     elif "xlsx" in nome_arquivo[-1]:
+        salvando_escala(arquivo_dowloaded)
         print("AINDA FALTA SER FEITA A IMPLEMENTAÇÃO")
         pass
     else:
@@ -151,7 +153,7 @@ def recibos_pdf(mensagem, tipo="") -> None:
 
 def servico(mensagem) -> None:
     id_user = mensagem.from_user.id
-    servicos = manipulador.exibircao_servico_dia()
+    servicos = exibircao_servico_dia()
     hora_atual = gerador_hora_certa()
     hora = hora_atual.split(":")[0]
     if len(servicos) > 1:
