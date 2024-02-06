@@ -242,7 +242,7 @@ def responder(mensagem) -> None:
     print(user_tags)
     print(tag)
     if tag == 1:
-        user_tags[id_user] = 2
+        #user_tags[id_user] = 2
         texto = mensagem.text
         if texto.lower() == "serviço":
             servico(mensagem)

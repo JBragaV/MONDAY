@@ -6,12 +6,15 @@ from PIL import Image
 import pytesseract
 from openpyxl import load_workbook
 
-
 from temp.decoradores_jocimar import imprimeNome
+from .uteis import criador_de_pastas
+
+
 
 @imprimeNome
 def salvando_escala(escala) -> None:
-    with open("Escala Jan 24.xlsx", "wb") as arquivo:
+    destino_arquivo = criador_de_pastas("Jocimar", "Come a", "DADADA")
+    with open(os.path.join(destino_arquivo, "Escala Jan 24.xlsx"), "wb") as arquivo:
         arquivo.write(escala)
 
 

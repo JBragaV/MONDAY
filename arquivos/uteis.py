@@ -1,7 +1,7 @@
 import os
 
 
-def criador_de_pastas(pasta_principal: str, pasta_secundaria: str = "", pasta_terciaria: str = "") -> str:
+def criador_de_pastas(pasta_principal: str = "", pasta_secundaria: str = "", pasta_terciaria: str = "") -> str:
     # Passta onde irá ficar os documentos: documentos/recibos||escala||normas_atc/nome_docs
     """
     Função responsável por verificar se todas as pastas de informadas existem e, caso não exista, cria as pastas.
@@ -11,7 +11,6 @@ def criador_de_pastas(pasta_principal: str, pasta_secundaria: str = "", pasta_te
     :return: None
     """
     try:
-        print(os.getcwd())
         __pasta_raiz = "documentos"
         __caminho = ""
 
@@ -34,17 +33,3 @@ def criador_de_pastas(pasta_principal: str, pasta_secundaria: str = "", pasta_te
         return __caminho
     except Exception as e:
         print(e)
-
-    def salvando_arquivos(arquivo):
-        
-        with open("recibo.pdf", "wb") as recibo:
-            recibo.write(arquivo_dowloaded)
-        mes, nome_arquivo = manipulador.extrair_texto_pdf("recibo.pdf")
-        caminho_recibo = manipulador.cria_pastas(mes, nome_arquivo, 'pdf')
-        with open(caminho_recibo, 'wb') as recibo:
-            recibo.write(arquivo_dowloaded)
-        os.remove("recibo.pdf")
-
-
-path = criador_de_pastas("Jocimar", "Come a", "DADADA")
-print(path)

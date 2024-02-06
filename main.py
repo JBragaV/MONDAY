@@ -1,6 +1,6 @@
 from random import randint
 from datetime import timedelta
-#from monday import bot, gerador_hora_certa
+from monday import bot, gerador_hora_certa
 from arquivos import criador_de_pastas
 
 
@@ -13,8 +13,7 @@ def numeros_mega_sena():
 
 
 if __name__ == "__main__":
-    path = criador_de_pastas("Manusinha")
-    print(path)
+    criador_de_pastas("DADADA")
     #numeros_mega_sena()
     #meu_looping()
-    #bot.infinity_polling()
+    bot.infinity_polling()
